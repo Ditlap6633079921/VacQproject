@@ -18,4 +18,4 @@ VacCenter.getAll = (result) => {
     })
 }
 
-module.exports = VacCenter;
+module.exports = VacCenter;       

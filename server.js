@@ -2,6 +2,8 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cookieParser= require('cookie-parser');
 const connectDB = require('./config/db');
+const mongoSanitize = require('express-mongo-sanitize');
+
 
 //Load env vars
 dotenv.config({path:'./config/config.env'});
@@ -9,20 +11,39 @@ dotenv.config({path:'./config/config.env'});
 //Connect to database
 connectDB();
 
+//const for express
+const app = express();
+
 //Route files
 const hospitals = require('./routes/hospitals');
 const auth = require('./routes/auth');
-const app = express();
 const appointments = require('./routes/appointments');
+const User = require('./routes/User');
+
+
+const {xss} = require('express-xss-sanitizer');
+
+
+
 
 //Body parser
 app.use(express.json());
 app.use('/api/v1/hospitals', hospitals);
 app.use('/api/v1/auth',auth);
 app.use('/api/v1/appointments',appointments);
+app.use('/api/v1/User',User);
+app.use(xss());
+
+const helmet = require('helmet')
+app.use(helmet())
+
+
+//sanitize data
+app.use(mongoSanitize());
 
 //Cookie Parser
 app.use(cookieParser());
+
 
 
 const PORT = process.env.PORT || 5000;
